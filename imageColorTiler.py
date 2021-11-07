@@ -1,16 +1,31 @@
 import cv2 as cv
 import numpy as np
+import sys
 
-# TODO Make these variables bash arguments 
-columns = 10
-rows =  1
-path = './example/example.jpg'
+# Get the command line arguments
+try:
+    path = sys.argv[1]
+    columns = int(sys.argv[2])
+    rows = int(sys.argv[3])    
+except ValueError:
+    print('Missing argument: <path> <columns> <rows>')
+    exit()
 
 # Get image from the specified file path
 img = cv.imread(cv.samples.findFile(path))
 
 # Get the image metadata
 height, width, channels = img.shape
+
+if (columns <= 0 or columns > width):
+    print('Can\'t have no columns or more columns tiles as the image pixel width')
+    print('Image dimensions(WxH): ', width, 'x', height)
+    exit()
+
+if (rows <= 0 or rows > height):
+    print('Can\'t have no rows or more rows tiles as the image pixel height')
+    print('Image dimensions(WxH): ', width, 'x', height)
+    exit()
 
 # Get the number of pixels needed per rows and per columns
 rowsCount = height//rows
@@ -59,5 +74,5 @@ for row in range(rows):
 
 # TODO Add instruction on leaving file
 
-cv.imshow("image", img)
+cv.imshow('image', img)
 cv.waitKey()
