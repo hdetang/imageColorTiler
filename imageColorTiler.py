@@ -39,8 +39,6 @@ columnsOffset = width%columns
 rowStart = 0
 rowEnd = rowsCount
 
-# TODO Add a loading in bash ?
-
 for row in range(rows):
     columnStart = 0
     columnEnd = columnsCount
@@ -72,7 +70,7 @@ for row in range(rows):
     rowEnd += rowsCount
     if (rowEnd > height): rowEnd = height
 
-# TODO Add instruction on leaving file
+print('Press any key to leave the image...')
 
 cv.imshow('image', img)
 cv.waitKey()
