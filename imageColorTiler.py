@@ -2,6 +2,29 @@ import cv2 as cv
 import numpy as np
 import sys
 
+
+def getBySortingPixels (img):
+    # Get the region of the image(ROI) by row and column
+    imgCell = img[rowStart:rowEnd, columnStart:columnEnd]
+
+    # Flatten the ROI by its colors and get their respective count
+    colors, count = np.unique(imgCell.reshape(-1, channels), axis=0, return_counts=True)
+
+    # Get the color having the most occurences (making it the most dominant one)
+    return colors[count.argmax()]
+
+def getByKmeans (img):
+        pixels = np.float32(img.reshape(-1, 3))
+
+        criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 200, .1)
+        flags = cv.KMEANS_RANDOM_CENTERS
+
+        _, labels, palette = cv.kmeans(pixels, 1, None, criteria, 10, flags)
+        _, counts = np.unique(labels, return_counts=True)
+
+        return palette[np.argmax(counts)]
+
+
 # Get the command line arguments
 try:
     path = sys.argv[1]
@@ -48,14 +71,8 @@ for row in range(rows):
     for column in range(columns):
         if (columnsOffset > column): columnEnd += 1
 
-        # Get the region of the image(ROI) by row and column
-        imgCell = img[rowStart:rowEnd, columnStart:columnEnd]
-
-        # Flatten the ROI by its colors and get their respective count
-        colors, count = np.unique(imgCell.reshape(-1, channels), axis=0, return_counts=True)
-
-        # Get the color having the most occurences (making it the most dominant one)
-        dominantColor = colors[count.argmax()]
+        dominantColor = getBySortingPixels(img)
+        #dominantColor = getByKmeans(img)
 
         # Replace the ROI in the image by its dominant color
         img[rowStart:rowEnd, columnStart:columnEnd] = np.full((rowEnd - rowStart, columnEnd - columnStart, 3), dominantColor)
